@@ -30,7 +30,7 @@ POST http://localhost:3000/session/logout
 ### 👉👉👉 Customer Endpoints 👈👈👈
 
 # @name createCustomer
-POST http://localhost:3000/customers/createCustomer
+POST http://localhost:3000/customers
 Content-Type: application/json
 
 {
@@ -46,20 +46,19 @@ Content-Type: application/json
 @customer_id = {{ createCustomer.response.body.id }}
 
 ### Get a customer by ID
-GET http://localhost:3000/admin/customers/getCustomerById?id={{ customer_id }}
+GET http://localhost:3000/admin/customers/{{ customer_id }}
 Authorization: Bearer {{ token }}
 
 ### List customers in admin with pagination and optional filtering
-GET http://localhost:3000/admin/customers/listCustomers?page=1&limit=10
+GET http://localhost:3000/admin/customers?page=1&limit=10
 Authorization: Bearer {{ token }}
 
 ### Update a customer
-POST http://localhost:3000/admin/customers/updateCustomer
+POST http://localhost:3000/admin/customers/{{ customer_id }}
 Content-Type: application/json
 Authorization: Bearer {{ token }}
 
 {
-  "id": "{{ customer_id }}",
   "email": "john@example.com",
   "password": "newpassword",
   "phone": "0987654321",
@@ -67,7 +66,7 @@ Authorization: Bearer {{ token }}
 }
 
 ### Delete a customer
-POST http://localhost:3000/admin/customers/deleteCustomer
+POST http://localhost:3000/admin/customers/{{ customer_id }}/delete
 Content-Type: application/json
 Authorization: Bearer {{ token }}
 
@@ -78,7 +77,7 @@ Authorization: Bearer {{ token }}
 ### 👉👉👉 Category Endpoints 👈👈👈
 
 # @name createCategory
-POST http://localhost:3000/admin/categories/createCategory
+POST http://localhost:3000/admin/categories/
 Content-Type: application/json
 Authorization: Bearer {{ token }}
 
@@ -92,17 +91,17 @@ Authorization: Bearer {{ token }}
 @category_slug = {{ createCategory.response.body.slug }}
 
 ### Get a category by ID
-GET http://localhost:3000/categories/getCategoryBySlug?slug={{ category_slug }}
+GET http://localhost:3000/categories/{{ category_slug }}
 
 ### List categories with pagination and optional filtering
-GET http://localhost:3000/categories/listCategories?page=1&limit=10&name=Category
+GET http://localhost:3000/categories?page=1&limit=10&name=Category
 
 ### List categories in admin with pagination and optional filtering
-GET http://localhost:3000/admin/categories/listCategories?page=1&limit=10&name=Category
+GET http://localhost:3000/admin/categories?page=1&limit=10&name=Category
 Authorization: Bearer {{ token }}
 
 ### Update a category
-POST http://localhost:3000/admin/categories/updateCategory
+POST http://localhost:3000/admin/categories/{{ category_id }}
 Content-Type: application/json
 Authorization: Bearer {{ token }}
 
@@ -113,7 +112,7 @@ Authorization: Bearer {{ token }}
 }
 
 ### Delete a category
-POST http://localhost:3000/admin/categories/deleteCategory
+POST http://localhost:3000/admin/categories/{{ category_id }}/delete
 Content-Type: application/json
 Authorization: Bearer {{ token }}
 
@@ -125,7 +124,7 @@ Authorization: Bearer {{ token }}
 ### 👉👉👉 Product Endpoints 👈👈👈
 
 # @name createProduct
-POST http://localhost:3000/admin/products/createProduct
+POST http://localhost:3000/admin/products/
 Content-Type: application/json
 Authorization: Bearer {{ token }}
 
@@ -142,14 +141,14 @@ Authorization: Bearer {{ token }}
 @product_slug = {{ createProduct.response.body.slug }}
 
 ### Get a product by ID
-GET http://localhost:3000/admin/products/getProductById?id={{ product_id }}
+GET http://localhost:3000/admin/products/{{ product_id }}
 Authorization: Bearer {{ token }}
 
 ### Get a product by slug
-GET http://localhost:3000/products/getProductBySlug?slug={{ product_slug }}
+GET http://localhost:3000/products/{{ product_slug }}
 
 ### Update a product
-POST http://localhost:3000/admin/products/updateProduct
+POST http://localhost:3000/admin/products/{{ product_id }}
 Content-Type: application/json
 Authorization: Bearer {{ token }}
 
@@ -163,7 +162,7 @@ Authorization: Bearer {{ token }}
 }
 
 ### Delete a product
-POST http://localhost:3000/admin/products/deleteProduct
+POST http://localhost:3000/admin/products/{{ product_id }}/delete
 Content-Type: application/json
 Authorization: Bearer {{ token }}
 
@@ -172,21 +171,21 @@ Authorization: Bearer {{ token }}
 }
 
 ### List products with pagination and optional filtering&name=Product&categories_slug=category-slug&user_id=1
-GET http://localhost:3000/products/listProducts?page=1&limit=10
+GET http://localhost:3000/products?page=1&limit=10
 
 ### List products in admin with pagination and optional filtering
-GET http://localhost:3000/admin/products/listProducts?page=1&limit=10&name=Product&categories_slug=category-slug&user_id=1
+GET http://localhost:3000/admin/products?page=1&limit=10&name=Product&categories_slug=category-slug&user_id=1
 Authorization: Bearer {{ token }}
 
 ### Get csv of products
-GET http://localhost:3000/admin/products/listProducts.csv
+GET http://localhost:3000/admin/products.csv
 Authorization: Bearer {{ token }}
 
 ### 👉👉👉 Cart Endpoints 👈👈👈
 
 ### Add an item to the cart "customerId": "{{ customer_id }}",
 # @name addItemToCart
-POST http://localhost:3000/carts/addItemToCart
+POST http://localhost:3000/cart/items
 Content-Type: application/json
 
 {
@@ -199,11 +198,11 @@ Content-Type: application/json
 @cart_id = {{ addItemToCart.response.body.id }}
 
 ### Get a cart by ID
-GET http://localhost:3000/carts/getCart
+GET http://localhost:3000/cart
 Cookie: connect.sid=s%3AChsdLB6EoAAXSn-bMQktOpIe_Oub7_kZ.l2CdzslYunIw4Teso4zp4jOLt80BQ5iU4o%2B4zLk8Yjs; Path=/; HttpOnly
 
 ### Remove an item from the cart
-POST http://localhost:3000/carts/removeItemFromCart
+POST http://localhost:3000/cart/items/1/remove
 Content-Type: application/json
 Cookie: connect.sid=s%3AChsdLB6EoAAXSn-bMQktOpIe_Oub7_kZ.l2CdzslYunIw4Teso4zp4jOLt80BQ5iU4o%2B4zLk8Yjs; Path=/; HttpOnly
 
@@ -212,13 +211,13 @@ Cookie: connect.sid=s%3AChsdLB6EoAAXSn-bMQktOpIe_Oub7_kZ.l2CdzslYunIw4Teso4zp4jO
 }
 
 ### Clear the cart
-POST http://localhost:3000/carts/clearCart
+POST http://localhost:3000/cart/clear
 Cookie: connect.sid=s%3AChsdLB6EoAAXSn-bMQktOpIe_Oub7_kZ.l2CdzslYunIw4Teso4zp4jOLt80BQ5iU4o%2B4zLk8Yjs; Path=/; HttpOnly
 
 ### 👉👉👉 Order Endpoints 👈👈👈
 
 ### Create an order
-POST http://localhost:3000/orders/createOrder
+POST http://localhost:3000/orders
 Content-Type: application/json
 Authorization: Bearer {{ token }}
 Cookie: connect.sid=s%3AifNqvlTcIvWVJGGz2M-cMP_6dLtfPr6G.UQFgCITuOMVP%2FffshnV5HLdlpYoFhTFRjcEUM8j%2FsEY; Path=/; HttpOnly
@@ -228,5 +227,5 @@ Cookie: connect.sid=s%3AifNqvlTcIvWVJGGz2M-cMP_6dLtfPr6G.UQFgCITuOMVP%2FffshnV5H
 }
 
 ### List orders with pagination and optional filtering
-GET http://localhost:3000/orders/listOrders?page=1&limit=10
+GET http://localhost:3000/orders?page=1&limit=10
 Authorization: Bearer {{ token }}
