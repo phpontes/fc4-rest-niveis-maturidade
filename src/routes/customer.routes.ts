@@ -5,7 +5,7 @@ import { validateSync } from "class-validator";
 
 const router = Router();
 
-router.post("/createCustomer", async (req, res) => {
+router.post("/", async (req, res) => {
   const customerService = await createCustomerService();
   const validator = new CreateCustomerDto(req.body);
   const errors = validateSync(validator);

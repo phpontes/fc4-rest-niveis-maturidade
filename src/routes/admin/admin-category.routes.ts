@@ -3,34 +3,34 @@ import { createCategoryService } from '../../services/category.service';
 
 const router = Router();
 
-router.post('/createCategory', async (req, res) => {
+router.post('/', async (req, res) => {
     const categoryService = await createCategoryService();
     const { name, slug } = req.body;
     const category = await categoryService.createCategory({ name, slug });
     res.json(category);
 });
 
-router.get('/getCategoryById', async (req, res) => {
+router.get('/:categoryId', async (req, res) => {
     const categoryService = await createCategoryService();
-    const category = await categoryService.getCategoryById(parseInt(req.query.id as string));
+    const category = await categoryService.getCategoryById(+req.params.categoryId);
     res.json(category);
 });
 
-router.post('/updateCategory', async (req, res) => {
+router.post('/:categoryId', async (req, res) => {
     const categoryService = await createCategoryService();
     const { id, name, slug } = req.body;
-    const category = await categoryService.updateCategory({ id: parseInt(id), name, slug });
+    const category = await categoryService.updateCategory({ id: +req.params.categoryId, name, slug });
     res.json(category);
 });
 
-router.post('/deleteCategory', async (req, res) => {
+router.post('/:categoryId/delete', async (req, res) => {
     const categoryService = await createCategoryService();
-    const { id } = req.body;
-    await categoryService.deleteCategory(parseInt(id));
-    res.sendStatus(204);
+    const { categoryId } = req.params;
+    await categoryService.deleteCategory(+categoryId);
+    res.json({ message: 'Category deleted' })
 });
 
-router.get('/listCategories', async (req, res) => {
+router.get('/', async (req, res) => {
     const categoryService = await createCategoryService();
     const { page = 1, limit = 10, name } = req.query;
     const { categories, total } = await categoryService.listCategories({

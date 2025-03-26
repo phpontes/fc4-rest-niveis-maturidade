@@ -3,13 +3,13 @@ import { createCategoryService } from '../services/category.service';
 
 const router = Router();
 
-router.get('/getCategoryBySlug', async (req, res) => {
+router.get('/:categorySlug', async (req, res) => {
     const categoryService = await createCategoryService();
-    const category = await categoryService.getCategoryBySlug(req.query.slug as string);
+    const category = await categoryService.getCategoryBySlug(req.params.categorySlug);
     res.json(category);
 });
 
-router.get('/listCategories', async (req, res) => {
+router.get('/', async (req, res) => {
     const categoryService = await createCategoryService();
     const { page = 1, limit = 10, name } = req.query;
     const { categories, total } = await categoryService.listCategories({

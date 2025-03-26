@@ -3,7 +3,7 @@ import { createCartService } from "../services/cart.service";
 
 const router = Router();
 
-router.post("/addItemToCart", async (req, res) => {
+router.post("/items", async (req, res) => {
   const cartService = await createCartService();
   //@ts-expect-error
   const cartId = req.session.cartId;
@@ -35,7 +35,7 @@ router.post("/addItemToCart", async (req, res) => {
   });
 });
 
-router.get("/getCart", async (req, res) => {
+router.get("/", async (req, res) => {
   const cartService = await createCartService();
   //@ts-expect-error
   const cartId = req.session.cartId;
@@ -43,9 +43,9 @@ router.get("/getCart", async (req, res) => {
   res.json(cart);
 });
 
-router.post("/removeItemFromCart", async (req, res) => {
+router.post("/items/:cartItemId/remove", async (req, res) => {
   const cartService = await createCartService();
-  const { cartItemId } = req.body;
+  const { cartItemId } = req.params;
   //@ts-expect-error
   const cartId = req.session.cartId;
   await cartService.removeItemFromCart({
@@ -55,7 +55,7 @@ router.post("/removeItemFromCart", async (req, res) => {
   res.send({ message: "Item removed from cart" });
 });
 
-router.post("/clearCart", async (req, res) => {
+router.post("/clear", async (req, res) => {
   const cartService = await createCartService();
   //@ts-expect-error
   const cartId = req.session.cartId;

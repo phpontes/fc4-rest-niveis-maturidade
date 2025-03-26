@@ -3,7 +3,7 @@ import { createProductService } from "../../services/product.service";
 
 const router = Router();
 
-router.post("/createProduct", async (req, res) => {
+router.post("/", async (req, res) => {
   const productService = await createProductService();
   const { name, slug, description, price, categoryIds } = req.body;
   const product = await productService.createProduct(
@@ -16,19 +16,17 @@ router.post("/createProduct", async (req, res) => {
   res.json(product);
 });
 
-router.get("/getProductById", async (req, res) => {
+router.get("/:productId", async (req, res) => {
   const productService = await createProductService();
-  const product = await productService.getProductById(
-    parseInt(req.query.id as string)
-  );
+  const product = await productService.getProductById(+req.params.productId);
   res.json(product);
 });
 
-router.post("/updateProduct", async (req, res) => {
+router.post("/:productId", async (req, res) => {
   const productService = await createProductService();
-  const { id, name, slug, description, price, categoryIds } = req.body;
+  const { name, slug, description, price, categoryIds } = req.body;
   const product = await productService.updateProduct({
-    id: parseInt(id),
+    id: +req.params.productId,
     name,
     slug,
     description,
@@ -38,14 +36,13 @@ router.post("/updateProduct", async (req, res) => {
   res.json(product);
 });
 
-router.post("/deleteProduct", async (req, res) => {
+router.post("/:productId/delete", async (req, res) => {
   const productService = await createProductService();
-  const { id } = req.body;
-  await productService.deleteProduct(parseInt(id));
+  await productService.deleteProduct(+req.params.productId);
   res.send({ message: "Product deleted successfully" });
 });
 
-router.get("/listProducts", async (req, res) => {
+router.get("/", async (req, res) => {
   const productService = await createProductService();
   const {
     page = 1,
