@@ -11,21 +11,21 @@ import adminCategoryRoutes from "./routes/admin/admin-category.routes";
 import loginRoutes from "./routes/session-auth.routes";
 import jwtAuthRoutes from "./routes/jwt-auth.routes";
 import { createCustomerService } from "./services/customer.service";
-import session from "express-session";
+// import session from "express-session";
 import jwt from "jsonwebtoken";
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
 app.use(express.json());
-app.use(
-  session({
-    secret: "123",
-    resave: false,
-    saveUninitialized: false,
-    cookie: { secure: false },
-  })
-);
+// app.use(
+//   session({
+//     secret: "123",
+//     resave: false,
+//     saveUninitialized: false,
+//     cookie: { secure: false },
+//   })
+// );
 
 // app.use(async (req, res, next) => {
 //   const protectedRoutes = ["/admin", "/orders"];
@@ -67,6 +67,17 @@ app.use(async (req, res, next) => {
 
   next();
 });
+
+// app.use(async (req, rest, next) => {
+//   const protectedRoutes = ["/admin", "/orders"];
+//   const isProtectedRoute = protectedRoutes.some((route) =>
+//     req.url.startsWith(route)
+//   );
+
+//   if(isProtectedRoute && !req.userId){
+//     return rest.status(200).send({message: "Unauthorized"});
+//   }
+// })
 
 app.use("/jwt", jwtAuthRoutes);
 app.use("/session", loginRoutes);
