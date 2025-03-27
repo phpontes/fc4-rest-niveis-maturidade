@@ -12,24 +12,42 @@ export class CartService {
     private customerRepository: Repository<Customer>
   ) {}
 
-  async getCart(id: number): Promise<Cart | null> {
+  async getCart(uuid: string): Promise<Cart | null> {
     return await this.cartRepository.findOne({
-      where: { id: id },
-      relations: ["items", "items.product"],
+      where: { uuid: uuid },
+      relations: ["items.product"],
     });
+  }
+
+  async createCart(customerId?: number){
+    let customer = null;
+    if (customerId) {
+      customer = await this.customerRepository.findOne({
+        where: { id: customerId },
+      });
+      if (!customer) {
+        throw new Error("Customer not found");
+      }
+    }
+
+    const cart = new Cart();
+    cart.customer = customer;
+    cart.items = [];
+
+    return this.cartRepository.save(cart);
   }
 
   async addItemToCart(data: {
     productId: number;
     quantity: number;
-    id?: number;
+    uuid: string;
     customerId?: number;
   }): Promise<Cart> {
-    const { productId, quantity, id, customerId } = data;
+    const { productId, quantity, uuid, customerId } = data;
     const where = {} as any;
 
-    if (id) {
-      where.uuid = id;
+    if (uuid) {
+      where.uuid = uuid;
     }
 
     if (customerId) {
@@ -39,28 +57,12 @@ export class CartService {
     let cart = Object.keys(where).length
       ? await this.cartRepository.findOne({
           where,
-          relations: ["items", "items.product"],
+          relations: ["items.product"],
         })
       : null;
 
     if (!cart) {
-      let customer = null;
-      if (customerId) {
-        customer = await this.customerRepository.findOne({
-          where: { id: customerId },
-        });
-        if (!customer) {
-          throw new Error("Customer not found");
-        }
-      }
-      if (!customer && customerId) {
-        throw new Error("Customer not found");
-      }
-
-      cart = new Cart();
-      cart.customer = customer;
-      cart.createdAt = new Date();
-      cart.items = [];
+      throw new Error("Cart not found")
     }
 
     const product = await this.productRepository.findOne({
@@ -88,13 +90,13 @@ export class CartService {
   }
 
   async removeItemFromCart(data: {
-    cartId: number;
+    cartUuid: string;
     cartItemId: number;
   }): Promise<void> {
-    const { cartId, cartItemId } = data;
+    const { cartUuid, cartItemId } = data;
 
     const cartItem = await this.cartItemRepository.findOne({
-      where: { cart: { id: cartId }, id: cartItemId },
+      where: { cart: { uuid: cartUuid }, id: cartItemId },
     });
 
     if (!cartItem) {
@@ -104,10 +106,10 @@ export class CartService {
     await this.cartItemRepository.remove(cartItem);
   }
 
-  async clearCart(id: number): Promise<Cart | null> {
+  async clearCart(uuid: string): Promise<Cart | null> {
     const cart = await this.cartRepository.findOne({
-      where: { id },
-      relations: ["items", "items.product"],
+      where: { uuid: uuid },
+      relations: ["items.product"],
     });
     if (!cart) {
       return null;

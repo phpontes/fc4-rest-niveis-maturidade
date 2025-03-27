@@ -14,13 +14,17 @@ export class Cart {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @OneToMany(() => CartItem, (cartItem) => cartItem.product)
+  @Column()
+  @Generated("uuid")
+  uuid: string;
+
+  @OneToMany(() => CartItem, (cartItem) => cartItem.product, { eager: true})
   items: CartItem[];
 
   @ManyToOne(() => Customer)
   customer: Customer | null;
 
-  @Column()
+  @CreateDateColumn()
   createdAt: Date;
 }
 

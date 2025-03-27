@@ -181,9 +181,18 @@ Authorization: Bearer {{ token }}
 
 ### 👉👉👉 Cart Endpoints 👈👈👈
 
+### Create a cart
+
+# @name createCart
+POST http://localhost:3000/carts
+
+###
+
+@cart_uuid = {{ createCart.response.body.uuid }}
+
 ### Add an item to the cart "customerId": "{{ customer_id }}",
 # @name addItemToCart
-POST http://localhost:3000/cart/items
+POST http://localhost:3000/carts/{{ cart_uuid }}/items
 Content-Type: application/json
 
 {
@@ -196,21 +205,18 @@ Content-Type: application/json
 @cart_id = {{ addItemToCart.response.body.id }}
 
 ### Get a cart by ID
-GET http://localhost:3000/cart
-Cookie: connect.sid=s%3AChsdLB6EoAAXSn-bMQktOpIe_Oub7_kZ.l2CdzslYunIw4Teso4zp4jOLt80BQ5iU4o%2B4zLk8Yjs; Path=/; HttpOnly
+GET http://localhost:3000/cart/{{ cart_uuid }}
 
 ### Remove an item from the cart
-DELETE http://localhost:3000/cart/items/1
+DELETE http://localhost:3000/cart/{{ cart_uuid }}/items/1
 Content-Type: application/json
-Cookie: connect.sid=s%3AChsdLB6EoAAXSn-bMQktOpIe_Oub7_kZ.l2CdzslYunIw4Teso4zp4jOLt80BQ5iU4o%2B4zLk8Yjs; Path=/; HttpOnly
 
 {
   "cartItemId": 1
 }
 
 ### Clear the cart
-POST http://localhost:3000/cart/clear
-Cookie: connect.sid=s%3AChsdLB6EoAAXSn-bMQktOpIe_Oub7_kZ.l2CdzslYunIw4Teso4zp4jOLt80BQ5iU4o%2B4zLk8Yjs; Path=/; HttpOnly
+POST http://localhost:3000/cart/{{ cart_uuid }}/clear
 
 ### 👉👉👉 Order Endpoints 👈👈👈
 

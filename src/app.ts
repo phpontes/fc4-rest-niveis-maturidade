@@ -73,7 +73,7 @@ app.use("/session", loginRoutes);
 app.use("/customers", customerRoutes);
 app.use("/categories", categoryRoutes);
 app.use("/products", productRoutes);
-app.use("/cart", cartRoutes);
+app.use("/carts", cartRoutes);
 app.use("/orders", orderRoutes);
 app.use("/admin/products", adminProductRoutes);
 app.use("/admin/customers", adminCustomerRoutes);
