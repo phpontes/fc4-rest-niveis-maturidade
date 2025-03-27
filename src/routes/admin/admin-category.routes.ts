@@ -16,7 +16,7 @@ router.get('/:categoryId', async (req, res) => {
     res.json(category);
 });
 
-router.post('/:categoryId', async (req, res) => {
+router.patch('/:categoryId', async (req, res) => {
     const categoryService = await createCategoryService();
     const { id, name, slug } = req.body;
     const category = await categoryService.updateCategory({ id: +req.params.categoryId, name, slug });

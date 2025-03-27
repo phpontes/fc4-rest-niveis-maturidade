@@ -54,7 +54,7 @@ GET http://localhost:3000/admin/customers?page=1&limit=10
 Authorization: Bearer {{ token }}
 
 ### Update a customer
-POST http://localhost:3000/admin/customers/{{ customer_id }}
+PATCH http://localhost:3000/admin/customers/{{ customer_id }}
 Content-Type: application/json
 Authorization: Bearer {{ token }}
 
@@ -100,7 +100,7 @@ GET http://localhost:3000/admin/categories?page=1&limit=10&name=Category
 Authorization: Bearer {{ token }}
 
 ### Update a category
-POST http://localhost:3000/admin/categories/{{ category_id }}
+PATCH http://localhost:3000/admin/categories/{{ category_id }}
 Content-Type: application/json
 Authorization: Bearer {{ token }}
 
@@ -146,7 +146,7 @@ Authorization: Bearer {{ token }}
 GET http://localhost:3000/products/{{ product_slug }}
 
 ### Update a product
-POST http://localhost:3000/admin/products/{{ product_id }}
+PATCH http://localhost:3000/admin/products/{{ product_id }}
 Content-Type: application/json
 Authorization: Bearer {{ token }}
 
