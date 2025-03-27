@@ -25,7 +25,7 @@ router.patch('/:customerId', async (req, res) => {
     res.json(customer);
 });
 
-router.post('/:customerId/delete', async (req, res) => {
+router.delete('/:customerId', async (req, res) => {
     const customerService = await createCustomerService();
     const { customerId } = req.params;
     await customerService.deleteCustomer(+customerId);

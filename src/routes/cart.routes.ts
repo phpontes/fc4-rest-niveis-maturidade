@@ -43,7 +43,7 @@ router.get("/", async (req, res) => {
   res.json(cart);
 });
 
-router.post("/items/:cartItemId/remove", async (req, res) => {
+router.delete("/items/:cartItemId", async (req, res) => {
   const cartService = await createCartService();
   const { cartItemId } = req.params;
   //@ts-expect-error

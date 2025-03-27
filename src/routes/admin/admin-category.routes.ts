@@ -23,7 +23,7 @@ router.patch('/:categoryId', async (req, res) => {
     res.json(category);
 });
 
-router.post('/:categoryId/delete', async (req, res) => {
+router.delete('/:categoryId', async (req, res) => {
     const categoryService = await createCategoryService();
     const { categoryId } = req.params;
     await categoryService.deleteCategory(+categoryId);
