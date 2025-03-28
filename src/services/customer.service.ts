@@ -22,7 +22,7 @@ export class CustomerService {
     const userExists = await this.userRepository.findOne({ where: { email } });
 
     if (userExists) {
-      throw new Error("User already exists");
+      throw new UserAlreadyExistsError("User already exists");
     }
 
     // Create a new user
@@ -95,4 +95,11 @@ export async function createCustomerService(): Promise<CustomerService> {
   const { customerRepository, userRepository } =
     await createDatabaseConnection();
   return new CustomerService(customerRepository, userRepository);
+}
+
+export class UserAlreadyExistsError extends Error {
+  constructor(email: string) {
+    super(`User with email ${email} already exists`);
+    this.name = "UserAlreadyExistsError";
+  }
 }
