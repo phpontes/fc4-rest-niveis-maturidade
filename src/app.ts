@@ -136,6 +136,12 @@ app.use((error: Error, req: Request, res: Response, next: NextFunction) => {
       },
     });
   }
+
+  res.status(500).send({
+    title: "Internal Server Error",
+    status: 500,
+    detail: "An unexpected error occurred",
+  });
 });
 
 app.use((result: Resource, req: Request, res: Response, next: NextFunction) => {
