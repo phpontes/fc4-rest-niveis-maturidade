@@ -1,4 +1,4 @@
-import express from "express";
+import express, { NextFunction, Request, Response } from "express";
 import { createDatabaseConnection } from "./database";
 import customerRoutes from "./routes/customer.routes";
 import categoryRoutes from "./routes/category.routes";
@@ -11,12 +11,13 @@ import adminCategoryRoutes from "./routes/admin/admin-category.routes";
 import loginRoutes from "./routes/session-auth.routes";
 import jwtAuthRoutes from "./routes/jwt-auth.routes";
 import { createCustomerService } from "./services/customer.service";
-// import session from "express-session";
+//import session from "express-session";
 import jwt from "jsonwebtoken";
+import { Resource } from "./http/resource";
 
 const app = express();
 const PORT = process.env.PORT || 3000;
-
+// comum API terem multiplas formas de auth
 app.use(express.json());
 // app.use(
 //   session({
@@ -75,7 +76,8 @@ app.use(async (req, res, next) => {
 //   );
 
 //   if(isProtectedRoute && !req.userId){
-//     return rest.status(200).send({message: "Unauthorized"});
+    
+//     return res.status(200).send({message: "Unauthorized"});
 //   }
 // })
 
@@ -94,6 +96,13 @@ app.get("/", async (req, res) => {
   await createDatabaseConnection();
   res.send("Hello World!");
 });
+
+app.use((result: Resource, req: Request, res: Response, next: NextFunction) => {
+  if(result instanceof Resource){
+    return res.json(result.toJson());
+  }
+  next(result);
+})
 
 app.listen(PORT, async () => {
   const customerService = await createCustomerService();

@@ -76,7 +76,7 @@ Authorization: Bearer {{ token }}
 ### 👉👉👉 Category Endpoints 👈👈👈
 
 # @name createCategory
-POST http://localhost:3000/admin/categories/
+POST http://localhost:3000/admin/categories
 Content-Type: application/json
 Authorization: Bearer {{ token }}
 
@@ -89,7 +89,7 @@ Authorization: Bearer {{ token }}
 @category_id = {{ createCategory.response.body.id }}
 @category_slug = {{ createCategory.response.body.slug }}
 
-### Get a category by ID
+### Get a category by slug
 GET http://localhost:3000/categories/{{ category_slug }}
 
 ### List categories with pagination and optional filtering
@@ -122,7 +122,7 @@ Authorization: Bearer {{ token }}
 ### 👉👉👉 Product Endpoints 👈👈👈
 
 # @name createProduct
-POST http://localhost:3000/admin/products/
+POST http://localhost:3000/admin/products
 Content-Type: application/json
 Authorization: Bearer {{ token }}
 
@@ -135,8 +135,8 @@ Authorization: Bearer {{ token }}
 }
 
 ###
-@product_id = {{ createProduct.response.body.id }}
-@product_slug = {{ createProduct.response.body.slug }}
+@product_id = {{ createProduct.response.body.data.id }}
+@product_slug = {{ createProduct.response.body.data.slug }}
 
 ### Get a product by ID
 GET http://localhost:3000/admin/products/{{ product_id }}
@@ -168,11 +168,11 @@ Authorization: Bearer {{ token }}
   "id": "{{ product_id }}"
 }
 
-### List products with pagination and optional filtering&name=Product&categories_slug=category-slug&user_id=1
+### List products with pagination and optional filtering&name=Product&categories_slug=category-slug,xpto1,xpto2
 GET http://localhost:3000/products?page=1&limit=10
 
-### List products in admin with pagination and optional filtering
-GET http://localhost:3000/admin/products?page=1&limit=10&name=Product&categories_slug=category-slug&user_id=1
+### List products in admin with pagination and optional filtering &name=Product&categories_slug=category-slug&user_id=1
+GET http://localhost:3000/admin/products?page=1&limit=10
 Authorization: Bearer {{ token }}
 
 ### Get csv of products
@@ -192,7 +192,7 @@ POST http://localhost:3000/carts
 
 ### Add an item to the cart "customerId": "{{ customer_id }}",
 # @name addItemToCart
-POST http://localhost:3000/carts/{{ cart_uuid }}/items
+POST http://localhost:3000/carts/{{cart_uuid}}/items
 Content-Type: application/json
 
 {
@@ -205,10 +205,10 @@ Content-Type: application/json
 @cart_id = {{ addItemToCart.response.body.id }}
 
 ### Get a cart by ID
-GET http://localhost:3000/cart/{{ cart_uuid }}
+GET http://localhost:3000/carts/{{ cart_uuid }}
 
 ### Remove an item from the cart
-DELETE http://localhost:3000/cart/{{ cart_uuid }}/items/1
+DELETE http://localhost:3000/carts/{{cart_uuid}}/items/1
 Content-Type: application/json
 
 {
@@ -216,7 +216,7 @@ Content-Type: application/json
 }
 
 ### Clear the cart
-POST http://localhost:3000/cart/{{ cart_uuid }}/clear
+POST http://localhost:3000/carts/{{cart_uuid}}/clear
 
 ### 👉👉👉 Order Endpoints 👈👈👈
 
@@ -224,10 +224,10 @@ POST http://localhost:3000/cart/{{ cart_uuid }}/clear
 POST http://localhost:3000/orders
 Content-Type: application/json
 Authorization: Bearer {{ token }}
-Cookie: connect.sid=s%3AifNqvlTcIvWVJGGz2M-cMP_6dLtfPr6G.UQFgCITuOMVP%2FffshnV5HLdlpYoFhTFRjcEUM8j%2FsEY; Path=/; HttpOnly
 
 {
-  "payment_method": "CREDIT_CARD"
+  "payment_method": "CREDIT_CARD",
+  "cart_uuid": "{{ cart_uuid }}"
 }
 
 ### List orders with pagination and optional filtering
