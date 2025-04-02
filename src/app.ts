@@ -39,7 +39,8 @@ app.use(async (req, res, next) => {
     return res.status(415).json({
       title: "Unsupported Media Type",
       status: 415,
-      detail: "Unsupported Media Type. Please use application/json or application/x-www-form-urlencoded",
+      detail:
+        "Unsupported Media Type. Please use application/json or application/x-www-form-urlencoded",
     });
   }
 
@@ -94,6 +95,41 @@ app.use(async (req, res, next) => {
   }
 
   next();
+});
+
+app.use(async (req, res, next) => {
+  const routesAllowingAlternateAccept = [
+    {
+      url: "/admin/products",
+      method: "GET",
+      accept: "text/csv",
+    },
+  ];
+
+  const acceptHeader = req.headers["accept"];
+  if (!acceptHeader) {
+    return next();
+  }
+
+  if (acceptHeader === "application/json") {
+    return next();
+  }
+
+  const route = routesAllowingAlternateAccept.find((route) => {
+    return req.url.startsWith(route.url) && req.method === route.method;
+  });
+
+  if (route && acceptHeader === route.accept) {
+    return next();
+  }
+
+  return res
+    .status(406)
+    .send({
+      title: "Not Acceptable",
+      status: 406,
+      detail: `Not Acceptable format requested: ${req.headers["accept"]}, only application/json and text/csv are supported`,
+    });
 });
 
 // app.use(async (req, rest, next) => {

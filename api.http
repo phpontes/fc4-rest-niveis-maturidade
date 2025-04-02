@@ -187,9 +187,10 @@ GET http://localhost:3000/products?page=1&limit=10
 ### List products in admin with pagination and optional filtering &name=Product&categories_slug=category-slug&user_id=1
 GET http://localhost:3000/admin/products?page=1&limit=10
 Authorization: Bearer {{ token }}
+Accept: application/json
 
 ### Get csv of products
-GET http://localhost:3000/admin/products.csv
+GET http://localhost:3000/admin/products/listProducts.csv
 Authorization: Bearer {{ token }}
 
 ### 👉👉👉 Cart Endpoints 👈👈👈
