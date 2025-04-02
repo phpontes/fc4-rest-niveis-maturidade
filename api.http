@@ -29,6 +29,19 @@ POST http://localhost:3000/session/logout
 
 ### 👉👉👉 Customer Endpoints 👈👈👈
 
+###
+POST http://localhost:3000/customers
+Content-Type: application/json
+
+<xml></xml>
+
+### With form-urlencoded
+POST http://localhost:3000/customers
+Content-Type: application/x-www-form-urlencoded
+
+name=john_doe&email=john@example.com&password=securepassword&phone=1234567890&address=123 Main St
+
+###
 # @name createCustomer
 POST http://localhost:3000/customers
 Content-Type: application/json

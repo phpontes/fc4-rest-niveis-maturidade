@@ -23,6 +23,29 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 // comum API terem multiplas formas de auth
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+app.use(async (req, res, next) => {
+  if (!req.headers["content-type"]) {
+    return next();
+  }
+
+  const allowedContentTypes = [
+    "application/json",
+    "application/x-www-form-urlencoded",
+  ];
+
+  if (!allowedContentTypes.includes(req.headers["content-type"])) {
+    return res.status(415).json({
+      title: "Unsupported Media Type",
+      status: 415,
+      detail: "Unsupported Media Type. Please use application/json or application/x-www-form-urlencoded",
+    });
+  }
+
+  next();
+});
+
 // app.use(
 //   session({
 //     secret: "123",
