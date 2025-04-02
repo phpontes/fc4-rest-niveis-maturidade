@@ -3,6 +3,7 @@
 # @name jwt_login
 POST http://localhost:3000/jwt/login
 Content-Type: application/json
+Origin: http://localhost:3000
 
 {
   "email": "admin@user.com",
@@ -181,13 +182,22 @@ Authorization: Bearer {{ token }}
   "id": "{{ product_id }}"
 }
 
+### OPTIONS /products
+
+OPTIONS http://localhost:3000/admin/products
+
+###
+
+OPTIONS http://localhost:3000/admin/products/1
+
 ### List products with pagination and optional filtering&name=Product&categories_slug=category-slug,xpto1,xpto2
 GET http://localhost:3000/products?page=1&limit=10
 
 ### List products in admin with pagination and optional filtering &name=Product&categories_slug=category-slug&user_id=1
 GET http://localhost:3000/admin/products?page=1&limit=10
 Authorization: Bearer {{ token }}
-Accept: application/json
+Content-Type: application/x-www-form-urlencoded
+Accept: text/css
 
 ### Get csv of products
 GET http://localhost:3000/admin/products/listProducts.csv

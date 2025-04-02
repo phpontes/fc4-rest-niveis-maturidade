@@ -18,12 +18,43 @@ import {
 import jwt from "jsonwebtoken";
 import { Resource } from "./http/resource";
 import { ValidationError } from "./errors";
+import { title } from "process";
+import { defaultCorsOptions } from "./http/cors";
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 // comum API terem multiplas formas de auth
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+// desabilitar a verificação de origem do cors para testes
+// app.use((req, res, next) => {
+//   if (req.method === "OPTIONS") {
+//     return next();
+//   }
+
+//   const origin = req.headers.origin;
+
+//   // Verifica se o header Origin existe
+//   if (!origin) {
+//     return res.status(400).json({
+//       title: "Bad Request",
+//       status: 400,
+//       detail: "Origin header is required",
+//     });
+//   }
+
+//   // Valida se a origem está na lista de permitidas
+//   if (!(defaultCorsOptions.origin! as string).split(",").includes(origin)) {
+//     return res.status(403).json({
+//       title: "Forbidden",
+//       status: 403,
+//       detail: "Origin not allowed",
+//     });
+//   }
+
+//   next();
+// });
 
 app.use(async (req, res, next) => {
   if (!req.headers["content-type"]) {
@@ -71,6 +102,10 @@ app.use(async (req, res, next) => {
 // });
 
 app.use(async (req, res, next) => {
+  if (req.method === "OPTIONS") {
+    return next();
+  }
+
   const protectedRoutes = ["/admin", "/orders"];
   const isProtectedRoute = protectedRoutes.some((route) =>
     req.url.startsWith(route)
@@ -111,7 +146,7 @@ app.use(async (req, res, next) => {
     return next();
   }
 
-  if (acceptHeader === "application/json") {
+  if (acceptHeader === "application/json" || acceptHeader === "*/*") {
     return next();
   }
 
@@ -123,13 +158,11 @@ app.use(async (req, res, next) => {
     return next();
   }
 
-  return res
-    .status(406)
-    .send({
-      title: "Not Acceptable",
-      status: 406,
-      detail: `Not Acceptable format requested: ${req.headers["accept"]}, only application/json and text/csv are supported`,
-    });
+  return res.status(406).send({
+    title: "Not Acceptable",
+    status: 406,
+    detail: `Not Acceptable format requested: ${req.headers["accept"]}, only application/json and text/csv are supported`,
+  });
 });
 
 // app.use(async (req, rest, next) => {
