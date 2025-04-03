@@ -238,3 +238,36 @@ https://datatracker.ietf.org/doc/html/rfc5988
 - Type: O tipo de conteúdo que será obtido ou o verbo HTTP que será usado
 
 <link href="theme.css" rel="stylesheet" type="text/css" />
+
+```json
+{
+  "name": "createUser",
+  "title": "Create User",
+  "type": "object",
+  "properties": {
+    "username": {
+      "type": "string",
+      "title": "Username",
+      "description": "Enter your desired username."
+    },
+    "email": {
+      "type": "string",
+      "format": "email",
+      "title": "Email Address"
+    },
+    "password": {
+      "type": "string",
+      "format": "password",
+      "title": "Password"
+    }
+  },
+  "required": ["username", "email", "password"],
+  "links": [
+    {
+      "rel": "create",
+      "href": "/users",
+      "method": "POST"
+    }
+  ]
+}
+```
