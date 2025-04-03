@@ -16,7 +16,7 @@ import {
 } from "./services/customer.service";
 //import session from "express-session";
 import jwt from "jsonwebtoken";
-import { Resource } from "./http/resource";
+import { IResource, Resource } from "./http/resource";
 import { ValidationError } from "./errors";
 import { title } from "process";
 import { defaultCorsOptions } from "./http/cors";
@@ -197,7 +197,6 @@ app.use((error: Error, req: Request, res: Response, next: NextFunction) => {
   if (!(error instanceof Error)) {
     return next(error);
   }
-
   console.error(error);
 
   if (error instanceof SyntaxError) {
@@ -236,8 +235,8 @@ app.use((error: Error, req: Request, res: Response, next: NextFunction) => {
   });
 });
 
-app.use((result: Resource, req: Request, res: Response, next: NextFunction) => {
-  if (result instanceof Resource) {
+app.use((result: IResource, req: Request, res: Response, next: NextFunction) => {
+  if ('toJson' in result) {
     return res.json(result.toJson());
   }
   next(result);

@@ -1,8 +1,12 @@
 import { Router } from "express";
 import { createProductService } from "../../services/product.service";
-import { Resource, ResourceCollection } from "../../http/resource";
+import { ResourceCollection } from "../../http/resource";
 import cors from "cors";
 import { defaultCorsOptions } from "../../http/cors";
+import {
+  ProductResource,
+  ProductResourceCollection,
+} from "../../http/product-resource";
 const router = Router();
 
 const corsCollection = cors({
@@ -27,14 +31,14 @@ router.post("/", corsCollection, async (req, res, next) => {
       categoryIds
     );
     res.set("Location", `/admin/products/${product.id}`).status(201);
-    const resource = new Resource(product);
+    const resource = new ProductResource(product, req);
     next(resource);
   } catch (e) {
     next(e);
   }
 });
 
-router.get("/:productId", corsItem, async (req, res) => {
+router.get("/:productId", corsItem, async (req, res, next) => {
   const productService = await createProductService();
   const product = await productService.getProductById(+req.params.productId);
   if (!product) {
@@ -44,11 +48,11 @@ router.get("/:productId", corsItem, async (req, res) => {
       detail: `Product with id ${req.params.productId} not found`,
     });
   }
-  const resource = new Resource(product);
-  res.json(resource);
+  const resource = new ProductResource(product, req);
+  next(resource);
 });
 
-router.patch("/:productId", corsItem, async (req, res) => {
+router.patch("/:productId", corsItem, async (req, res, next) => {
   const productService = await createProductService();
   const { name, slug, description, price, categoryIds } = req.body;
   const product = await productService.updateProduct({
@@ -59,8 +63,8 @@ router.patch("/:productId", corsItem, async (req, res) => {
     price,
     categoryIds,
   });
-  const resource = new Resource(product);
-  res.json(resource);
+  const resource = new ProductResource(product!, req);
+  next(resource);
 });
 
 router.delete("/:productId", corsItem, async (req, res) => {
@@ -94,7 +98,7 @@ router.get("/", corsCollection, async (req, res, next) => {
     req.headers["accept"] === "*/*" ||
     req.headers["accept"] === "application/json"
   ) {
-    const collection = new ResourceCollection(products, {
+    const collection = new ProductResourceCollection(products, req, {
       paginationData: {
         total,
         page: parseInt(page as string),
