@@ -5,3 +5,11 @@ services:
       - 3000:3000
     volumes:
       - .:/home/node/app
+  
+  nginx:
+    build: .docker/nginx
+    restart: always
+    ports:
+      - 4000:80
+    volumes:
+      - ./static:/var/www/html/static
