@@ -1,4 +1,45 @@
-# Curso REST
+
+# Full Cycle 4 - REST e Níveis de Maturidade na prática
+
+## Descrição
+
+Este repositório contém o código fonte do projeto desenvolvido durante o curso Full Cycle 4.0 - REST e Níveis de Maturidade na prática.
+
+## Professor
+
+<a href="https://github.com/argentinaluiz">
+    <img src="https://avatars.githubusercontent.com/u/4926329?v=4?s=100" width="100px;" alt=""/>
+    <br />
+    <sub>
+        <b>Luiz Carlos</b>
+    </sub>
+</a>
+
+---
+
+## Sumário
+
+1. [Introdução](#introdução)  
+2. [Slides](#slides)
+3. [Exemplo REST meia boca para E-commerce](#exemplo-rest-meia-boca-para-e-commerce)  
+4. [Documentação do HTTP](#documentação-do-http)  
+   - [Especificação do verbo HTTP PATCH](#especificação-do-verbo-http-patch)  
+5. [Níveis de Maturidade REST](#níveis-de-maturidade-rest)  
+   - [Exemplo de Level 0](#exemplo-de-level-0)  
+   - [Exemplo de Level 1](#exemplo-de-level-1---resources)  
+   - [Exemplo de Level 3 - Hypermedia Controls](#exemplo-do-level-3---hypermedia-controls)
+6. [Outro exemplo que uma API Restful com Laminas API Tools](#laminas-api-tools)
+7. [Lista de Verbos HTTP](#lista-de-verbos-http)  
+8. [Lista de Status Codes](#lista-de-status-codes)  
+9. [Referências](#referências)  
+
+## Introdução
+
+Neste curso, exploramos os conceitos de REST e seus níveis de maturidade na prática, usando como exemplo um sistema de E-commerce que não implementa REST corretamente.
+
+## Slides
+
+- [Slides do curso](./Curso%20de%20REST.pdf)
 
 ## Exemplo REST meia boca para E-commerce
 
@@ -33,11 +74,24 @@
 | Create an order                               | POST        | /orders/createOrder                            |
 | List orders with pagination                   | GET         | /orders/listOrders                             |
 
-# Exemplo de Level 0
+---
 
-## RPC Style - JSON
+## Documentação do HTTP
 
-### Criar um customer
+### [HTTP 1.1](https://datatracker.ietf.org/doc/html/rfc2616)
+
+### [Especificação do verbo HTTP PATCH](https://datatracker.ietf.org/doc/html/rfc5789)
+
+---
+
+## Níveis de Maturidade REST
+
+### Exemplo de Level 0
+
+#### RPC Style - JSON
+
+Criar um customer:
+
 ```http
 POST /customers HTTP/1.1
 
@@ -46,7 +100,7 @@ POST /customers HTTP/1.1
     "data": {
         "name": "John Doe",
         "email": "user@customer.com",
-        "phone": "1234567890"
+        "phone": "1234567890",
         "address": {
             "street": "1234 Main St",
             "city": "Springfield",
@@ -54,11 +108,11 @@ POST /customers HTTP/1.1
             "zip": "62701"
         }
     }
-
 }
 ```
 
-### Pegar um customer
+Pegar um customer:
+
 ```http
 POST /customers HTTP/1.1
 
@@ -67,88 +121,12 @@ POST /customers HTTP/1.1
     "data": {
         "id": 123
     }
-
 }
 ```
 
-## RPC Style - XML
+---
 
-### Criar um customer
-```http
-POST /customers HTTP/1.1
-
-<methodCall>
-    <methodName>create</methodName>
-    <params>
-        <param>
-            <value>
-                <struct>
-                    <member>
-                        <name>name</name>
-                        <value>John Doe</value>
-                    </member>
-                    <member>
-                        <name>email</name>
-                        <value>user@user.com</value>
-                    </member>
-                    <member>
-                        <name>phone</name>
-                        <value>1234567890</value>
-                    </member>
-                    <member>
-                        <name>address</name>
-                        <value>
-                            <struct>
-                                <member>
-                                    <name>street</name>
-                                    <value>1234 Main St</value>
-                                </member>
-                                <member>
-                                    <name>city</name>
-                                    <value>Springfield</value>
-                                </member>
-                                <member>
-                                    <name>state</name>
-                                    <value>IL</value>
-                                </member>
-                                <member>
-                                    <name>zip</name>
-                                    <value>62701</value>
-                                </member>
-                            </struct>
-                        </value>
-                    </member>
-                </struct>
-            </value>
-        </param>
-    </params>
-</methodCall>
-```
-
-### Pegar um customer
-```http
-POST /customers HTTP/1.1
-
-<methodCall>
-    <methodName>get</methodName>
-    <params>
-        <param>
-            <value>
-                <struct>
-                    <member>
-                        <name>id</name>
-                        <value>123</value>
-                    </member>
-                </struct>
-            </value>
-        </param>
-    </params>
-</methodCall>
-```
-
-# Exemplo do level 1 - resources
-
-## Exemplo REST meia boca para E-commerce
+### Exemplo de Level 1 - Resources
 
 | Operação                                      | Método HTTP | Path                                           |
 |-----------------------------------------------|-------------|------------------------------------------------|
@@ -196,9 +174,9 @@ POST /customers HTTP/1.1
 | `TRACE`     | Depurar requisição                  | Sim            | Não     |
 | `CONNECT`   | Estabelecer túnel                   | Não            | Não     |
 
-# Lista dos status codes
+### Exemplo do Level 3 - Hypermedia Controls
 
-https://developer.mozilla.org/pt-BR/docs/Web/HTTP/Status
+#### Request:
 
 ```http
 POST /products
@@ -208,6 +186,8 @@ POST /products
     "price": 100
 }
 ```
+
+#### Response:
 
 ```json
 {
@@ -225,49 +205,45 @@ POST /products
         },
         "delete": {
             "href": "/products/1",
-            "method": "DELETE",
+            "method": "DELETE"
         }
     }
 }
 ```
 
-https://datatracker.ietf.org/doc/html/rfc5988
+## Laminas API Tools
 
-- URI: O endereço do recurso alvo
-- Rel: O tipo de relação entre o recurso atual e o recurso alvo
-- Type: O tipo de conteúdo que será obtido ou o verbo HTTP que será usado
+Aqui está um exemplo de uma API Restful com Laminas API Tools.
 
-<link href="theme.css" rel="stylesheet" type="text/css" />
+- [Laminas API Tools](https://github.com/devfullcycle/api-tools-skeleton)
 
-```json
-{
-  "name": "createUser",
-  "title": "Create User",
-  "type": "object",
-  "properties": {
-    "username": {
-      "type": "string",
-      "title": "Username",
-      "description": "Enter your desired username."
-    },
-    "email": {
-      "type": "string",
-      "format": "email",
-      "title": "Email Address"
-    },
-    "password": {
-      "type": "string",
-      "format": "password",
-      "title": "Password"
-    }
-  },
-  "required": ["username", "email", "password"],
-  "links": [
-    {
-      "rel": "create",
-      "href": "/users",
-      "method": "POST"
-    }
-  ]
-}
-```
+## Lista de Verbos HTTP
+
+| **Verbo**   | **Objetivo**                        | **Idempotente** | **Safe** |
+|-------------|-------------------------------------|----------------|---------|
+| `GET`       | Recuperar recursos                  | Sim            | Sim     |
+| `POST`      | Criar um recurso                    | Não            | Não     |
+| `PUT`       | Substituir recurso completamente    | Sim            | Não     |
+| `PATCH`     | Atualizar parcialmente um recurso   | Sim            | Não     |
+| `DELETE`    | Remover um recurso                  | Sim            | Não     |
+| `HEAD`      | Obter cabeçalhos                    | Sim            | Sim     |
+| `OPTIONS`   | Verificar métodos permitidos        | Sim            | Sim     |
+---
+
+## Lista de Status Codes
+
+Confira a lista completa de status codes no [MDN](https://developer.mozilla.org/pt-BR/docs/Web/HTTP/Status).
+
+---
+
+## Referências
+
+- [Disseratação do REST](https://ics.uci.edu/~fielding/pubs/dissertation/fielding_dissertation.pdf)
+- [Roy Fielding Frustado com REST](https://roy.gbiv.com/untangled/2008/rest-apis-must-be-hypertext-driven)
+- [Richardson Maturity Model](https://www.crummy.com/writing/speaking/2008-QCon/act3.html)
+- [Livro REST in Practice](https://www.amazon.com/REST-Practice-Hypermedia-Systems-Architecture/dp/0596805829)
+- [HTTP 1.1 - RFC 2616](https://datatracker.ietf.org/doc/html/rfc2616)
+- [HTTP PATCH - RFC 5789](https://datatracker.ietf.org/doc/html/rfc5789)
+- [Hypermedia Controls - RFC 5988](https://datatracker.ietf.org/doc/html/rfc5988)
+- [Json+Hal](https://stateless.group/hal_specification.html)
+- [Cache Control](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Cache-Control)
