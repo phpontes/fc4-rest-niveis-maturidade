@@ -1,125 +1,46 @@
-import { Request } from "express";
-import { Product } from "../entities/Product";
-import { Link, Resource, ResourceCollection } from "./resource";
+import { Router } from "express";
+import { createProductService } from "../services/product.service";
 
-export class ProductResource extends Resource {
-  constructor(
-    data: Product,
-    protected request: Request,
-    meta?: { links?: { [key: string]: Link }; [key: string]: any }
-  ) {
-    super(data, meta);
-  }
+const router = Router();
 
-  toJson() {
-    const url = this.request.originalUrl.split("?")[0];
-    const defaultLinks = {
-      self: {
-        href: url + "/" + this.data.id,
-        method: "GET",
-        type: "application/json",
-      },
-      update: {
-        href: url + "/" + this.data.id,
-        method: "PATCH",
-        type: "application/json",
-      },
-      delete: {
-        href: url + "/" + this.data.id,
-        method: "DELETE",
-      },
-    };
+router.get("/:productSlug", async (req, res) => {
+  const productService = await createProductService(); 
+  const product = await productService.getProductBySlug(
+    req.params.productSlug as string
+  );
+  
+  res.json(product);
+});
 
-    const result = super.toJson();
+router.get("/", async (req, res) => {
+  const productService = await createProductService();
+  const {
+    page = 1,
+    limit = 10,
+    name,
+    categories_slug: categoriesSlugStr,
+  } = req.query;
+  const categories_slug = categoriesSlugStr
+    ? categoriesSlugStr.toString().split(",")
+    : [];
+  const { products, total } = await productService.listProducts({
+    page: parseInt(page as string),
+    limit: parseInt(limit as string),
+    filter: {
+      name: name as string,
+      categories_slug,
+    },
+  });
 
-    return {
-      ...result,
-      _meta: {
-        ...result._meta,
-        _links: {
-          ...result._meta._links,
-          ...defaultLinks,
-        },
-      },
-    };
-  }
-}
+  // if(req.headers['if-modified-since'] === new Date().toUTCString()) {
+  //   res.set('Last-Modified', new Date().toUTCString());
+  //   res.set('Cache-Control', 'public, max-age=60');
+  //   res.status(304).end();
+  //   return
+  // }
 
-export class ProductResourceCollection extends ResourceCollection {
-  constructor(
-    protected data: Product[],
-    protected request: Request,
-    protected meta?: {
-      paginationData?: { total: number; page: number; limit: number };
-      links?: { [key: string]: Link };
-      [key: string]: any;
-    }
-  ) {
-    super(data, meta);
-  }
+  // res.set('Last-Modified', new Date().toUTCString());
+  res.json({ products, total });
+});
 
-  toJson() {
-    const defaultLinks = {
-      self: {
-        href: this.request.originalUrl,
-        method: "GET",
-        type: "application/json",
-      },
-      ...(this.meta?.paginationData && {
-        //conditionally for next
-        ...(this.meta?.paginationData.page * this.meta?.paginationData.limit <
-          this.meta?.paginationData.total && {
-          next: {
-            href:
-              this.request?.originalUrl +
-              `?page=${this.meta?.paginationData.page + 1}`,
-            method: "GET",
-          },
-        }),
-        //conditionally for prev
-        ...(this.meta?.paginationData.page > 1 && {
-          prev: {
-            href:
-              this.request?.originalUrl +
-              `?page=${this.meta?.paginationData.page - 1}`,
-            method: "GET",
-          },
-        }),
-        last: {
-          href:
-            this.request?.originalUrl +
-            `?page=${Math.ceil(
-              this.meta?.paginationData.total / this.meta?.paginationData.limit
-            )}`,
-          method: "GET",
-        },
-      }),
-    };
-
-    const { _meta: defaultMeta } = super.toJson();
-    const { paginationData, ...otherMeta } = this.meta || {};
-
-    const meta = {
-      ...defaultMeta,
-      ...otherMeta,
-    };
-
-    return {
-      data: this.data.map((product) => {
-        const resource = new ProductResource(product, this.request);
-        const { data, _meta } = resource.toJson();
-        return {
-          ...data,
-          _meta,
-        };
-      }),
-      _meta: {
-        ...meta,
-        _links: {
-          ...defaultLinks,
-          ...this.meta?.links,
-        },
-      },
-    };
-  }
-}
+export default router;
