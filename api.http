@@ -14,6 +14,11 @@ Origin: http://localhost:3000
 
 @token = {{ jwt_login.response.body.token }}
 
+### 👉👉👉 Ge me 👈👈👈
+
+GET http://localhost:3000/jwt/me
+Authorization: Bearer {{ token }}
+
 ### 👉👉👉 Session login 👈👈👈
 
 POST http://localhost:3000/session/login

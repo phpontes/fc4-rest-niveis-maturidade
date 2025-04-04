@@ -27,6 +27,26 @@ const PORT = process.env.PORT || 3000;
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+//log requests
+app.use(async (req, res, next) => {
+  console.log(`request - [${new Date().toISOString()}] ${req.method} ${req.url}`);
+  next();
+});
+
+//log responses headers
+app.use(async (req, res, next) => {
+  res.on("finish", () => {
+    console.log(
+      `response - [${new Date().toISOString()}] ${req.method} ${req.url} ${res.statusCode} ${res.statusMessage}`
+    );
+    console.log(res.getHeaders());
+  });
+
+  
+
+  next();
+});
+
 // desabilitar a verificação de origem do cors para testes
 // app.use((req, res, next) => {
 //   if (req.method === "OPTIONS") {
