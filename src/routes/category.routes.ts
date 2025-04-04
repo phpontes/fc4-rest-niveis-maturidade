@@ -2,6 +2,7 @@ import { Router } from "express";
 import { createCategoryService } from "../services/category.service";
 import { defaultCorsOptions } from "../http/cors";
 import cors from "cors";
+import { responseCached } from "../http/response-cached";
 
 const corsCollection = cors({
   ...defaultCorsOptions,
@@ -28,8 +29,14 @@ router.get("/", corsCollection, async (req, res) => {
     limit: parseInt(limit as string),
     filter: { name: name as string },
   });
-  res.set("Cache-Control", `max-age=${20}`);
-  res.json({ categories, total });
+  return responseCached({
+    res,
+    body: { categories, total },
+  }, {
+    maxAge: 20,
+    type: "public",
+    revalidate: "must-revalidate",
+  })
 });
 
 router.options(

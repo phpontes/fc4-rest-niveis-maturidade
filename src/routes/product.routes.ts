@@ -1,64 +1,17 @@
 import { Router } from "express";
-import { createProductService } from "../../services/product.service";
-import { Resource, ResourceCollection } from "../../http/resource";
+import { createProductService } from "../services/product.service";
 
 const router = Router();
 
-router.post("/", async (req, res, next) => {
-  const productService = await createProductService();
-  const { name, slug, description, price, categoryIds } = req.body;
-  try {
-    const product = await productService.createProduct(
-      name,
-      slug,
-      description,
-      price,
-      categoryIds
-    );
-    res.set("Location", `/admin/products/${product.id}`).status(201);
-    const resource = new Resource(product);
-    next(resource);
-  } catch (e) {
-    next(e);
-  }
+router.get("/:productSlug", async (req, res) => {
+  const productService = await createProductService(); 
+  const product = await productService.getProductBySlug(
+    req.params.productSlug as string
+  );
+  res.json(product);
 });
 
-router.get("/:productId", async (req, res) => {
-  const productService = await createProductService();
-  const product = await productService.getProductById(+req.params.productId);
-  if (!product) {
-    return res.status(404).json({
-      title: "Not Found",
-      status: 404,
-      detail: `Product with id ${req.params.productId} not found`,
-    });
-  }
-  const resource = new Resource(product);
-  res.json(resource);
-});
-
-router.patch("/:productId", async (req, res) => {
-  const productService = await createProductService();
-  const { name, slug, description, price, categoryIds } = req.body;
-  const product = await productService.updateProduct({
-    id: +req.params.productId,
-    name,
-    slug,
-    description,
-    price,
-    categoryIds,
-  });
-  const resource = new Resource(product);
-  res.json(resource);
-});
-
-router.delete("/:productId", async (req, res) => {
-  const productService = await createProductService();
-  await productService.deleteProduct(+req.params.productId);
-  res.status(204).send();
-});
-
-router.get("/", async (req, res, next) => {
+router.get("/", async (req, res) => {
   const productService = await createProductService();
   const {
     page = 1,
@@ -78,26 +31,15 @@ router.get("/", async (req, res, next) => {
     },
   });
 
-  if(!req.headers['accept'] || req.headers['accept'] === 'application/json') {
-    const collection = new ResourceCollection(products, {
-      paginationData: {
-        total,
-        page: parseInt(page as string),
-        limit: parseInt(limit as string),
-      },
-    });
-    return next(collection);
-  }
+  // if(req.headers['if-modified-since'] === new Date().toUTCString()) {
+  //   res.set('Last-Modified', new Date().toUTCString());
+  //   res.set('Cache-Control', 'public, max-age=60');
+  //   res.status(304).end();
+  //   return
+  // }
 
-  if(req.headers['accept'] === 'text/csv') {
-    const csv = products
-      .map((product) => {
-        return `${product.name},${product.slug},${product.description},${product.price}`;
-      })
-      .join("\n");
-    res.set("Content-Type", "text/csv");
-    return res.send(csv);
-  }
+  // res.set('Last-Modified', new Date().toUTCString());
+  res.json({ products, total });
 });
 
 export default router;

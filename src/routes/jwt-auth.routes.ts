@@ -4,6 +4,7 @@ import { createDatabaseConnection } from "../database";
 import jwt from "jsonwebtoken";
 import cors from "cors";
 import { defaultCorsOptions } from "../http/cors";
+import { responseCached } from "../http/response-cached";
 const router = Router();
 
 router.post("/login", async (req, res) => {
@@ -37,8 +38,18 @@ router.get(
     const { userRepository } = await createDatabaseConnection();
     const user = await userRepository.findOne({ where: { id: userId } });
 
-    res.setHeader('Cache-Control', 'private, max-age=20');
-    return res.send(user);
+    return responseCached(
+      {
+        res,
+        body: user,
+      },
+      {
+        maxAge: 60,
+        type: "private",
+        revalidate: "must-revalidate",
+        //lastModified: user?.updatedAt,
+      }
+    );
   }
 );
 

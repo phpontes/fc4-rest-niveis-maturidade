@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { createOrderService } from "../services/order.service";
 import { Resource } from "../http/resource";
+import { responseCached } from "../http/response-cached";
 
 const router = Router();
 
@@ -37,12 +38,12 @@ router.post("/", async (req, res, next) => {
       },
     }
   );
-  next(resource);
+  next(resource)
 });
 
 //localhost:3000 / orders / 1
 
-http: router.get("/", async (req, res) => {
+router.get("/", async (req, res) => {
   const orderService = await createOrderService();
   const { page = 1, limit = 10 } = req.query;
   // @ts-expect-error
@@ -52,7 +53,17 @@ http: router.get("/", async (req, res) => {
     limit: parseInt(limit as string),
     customerId,
   });
-  res.json({ orders, total });
+  return responseCached(
+    {
+      res,
+      body: { orders, total },
+    },
+    {
+      maxAge: 20,
+      type: "private",
+      revalidate: "must-revalidate",
+    }
+  )
 });
 
 export default router;
